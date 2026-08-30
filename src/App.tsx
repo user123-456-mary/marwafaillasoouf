@@ -303,51 +303,40 @@ function App() {
         </a>
       </nav>
 
-      <div className="top-actions">
+      {/* BOUTONS AFFICHÉS EN PERMANENCE SANS CONDITION */}
+      <div className="top-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <button 
+          className="login-button" 
+          style={{ background: '#2563eb', color: '#fff', border: 'none', fontWeight: 600 }}
+          onClick={() => setView('restaurant-dashboard')}
+        >
+          <Store size={16} /> Restaurant
+        </button>
+
+        <button 
+          className="login-button" 
+          style={{ background: '#d97706', color: '#fff', border: 'none', fontWeight: 600 }}
+          onClick={() => setView('delivery-dashboard')}
+        >
+          🛵 Livreur
+        </button>
+
+        <button 
+          className="login-button" 
+          style={{ background: '#7c3aed', color: '#fff', border: 'none', fontWeight: 600 }}
+          onClick={() => setView('admin-dashboard')}
+        >
+          👑 Admin
+        </button>
+
         {user ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {/* Bouton Admin */}
-            {role === 'admin' && (
-              <button
-                className="login-button"
-                onClick={() => setView('admin-dashboard')}
-                style={{ background: '#7c3aed', color: '#fff', border: 'none', fontWeight: 600 }}
-              >
-                👑 Admin
-              </button>
-            )}
-
-            {/* Bouton Restaurant */}
-            {(role === 'restaurant' || role === 'admin') && (
-              <button 
-                className="login-button" 
-                style={{ background: '#fff', border: '1px solid #e2e8f0', color: '#1e293b', fontWeight: 600 }}
-                onClick={() => setView('restaurant-dashboard')}
-              >
-                <Store size={16} /> Espace Restaurant
-              </button>
-            )}
-
-            {/* Bouton Livreur */}
-            {(role === 'courier' || role === 'admin') && (
-              <button
-                className="login-button"
-                onClick={() => setView('delivery-dashboard')}
-                style={{ background: '#d97706', color: '#fff', border: 'none', fontWeight: 600 }}
-              >
-                🛵 Livreur
-              </button>
-            )}
-
-            {/* Bouton Déconnexion */}
-            <button 
-              className="login-button" 
-              onClick={signOut}
-              style={{ cursor: 'pointer', background: '#f8fafc', border: '1px solid #e2e8f0' }}
-            >
-              <LogOut size={16} /> Déconnexion
-            </button>
-          </div>
+          <button 
+            className="login-button" 
+            onClick={signOut}
+            style={{ cursor: 'pointer', background: '#f8fafc', border: '1px solid #e2e8f0' }}
+          >
+            <LogOut size={16} /> Déconnexion
+          </button>
         ) : (
           <button className="login-button" onClick={() => setLoginOpen(true)}>
             <UserRound size={17} /> Se connecter
