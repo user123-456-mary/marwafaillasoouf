@@ -551,35 +551,15 @@ const renderHeader = () => (
   );
 
   if (view === 'restaurant-dashboard') {
-    if (role === 'restaurant' || role === 'admin') {
-      return <RestaurantDashboard onBack={goHome} />;
-    }
-    return (
-      <div className="p-8 text-center text-red-600 font-bold">
-        Accès refusé : espace réservé aux restaurateurs.
-      </div>
-    );
+    return <RestaurantDashboard onBack={goHome} />;
   }
+  
 if (view === 'delivery-dashboard') {
-    if (role === 'courier' || role === 'admin') {
-      return <DeliveryDashboard onBack={goHome} />;
-    }
-    return (
-      <div className="p-8 text-center text-red-600 font-bold">
-        Accès refusé : espace réservé aux livreurs.
-      </div>
-    );
+    return <DeliveryDashboard onBack={goHome} />;
   }
 if (view === 'admin-dashboard') {
-    if (role === 'admin') {
       return <AdminDashboard onBack={goHome} />;
     }
-    return (
-      <div className="p-8 text-center text-red-600 font-bold">
-        Accès refusé : espace réservé aux administrateurs.
-      </div>
-    );
-  }
   if (view === 'restaurant' && selectedRestaurant) {
     return (
       <div className="app-shell">
