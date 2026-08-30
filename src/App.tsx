@@ -265,7 +265,7 @@ function App() {
     return Object.entries(sections);
   }, [selectedRestaurant]);
 
-  const renderHeader = () => (
+const renderHeader = () => (
     <header className="topbar">
       <a 
         className="brand" 
@@ -303,42 +303,42 @@ function App() {
         </a>
       </nav>
 
-      {/* BOUTONS AFFICHÉS EN PERMANENCE SANS CONDITION */}
-      <div className="top-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="top-actions">
         <button 
           className="login-button" 
-          style={{ background: '#2563eb', color: '#fff', border: 'none', fontWeight: 600 }}
+          style={{ background: '#fff', border: '1px solid #e2e8f0', color: '#1e293b', fontWeight: 600 }}
           onClick={() => setView('restaurant-dashboard')}
         >
-          <Store size={16} /> Restaurant
+          <Store size={16} /> Espace Restaurant
         </button>
 
         <button 
           className="login-button" 
-          style={{ background: '#d97706', color: '#fff', border: 'none', fontWeight: 600 }}
           onClick={() => setView('delivery-dashboard')}
         >
-          🛵 Livreur
+          Espace Livreur
         </button>
 
         <button 
           className="login-button" 
-          style={{ background: '#7c3aed', color: '#fff', border: 'none', fontWeight: 600 }}
           onClick={() => setView('admin-dashboard')}
         >
-          👑 Admin
+          Admin
         </button>
 
-        {user ? (
+        {currentUser ? (
           <button 
             className="login-button" 
-            onClick={signOut}
-            style={{ cursor: 'pointer', background: '#f8fafc', border: '1px solid #e2e8f0' }}
+            style={{ cursor: 'pointer' }}
+            onClick={() => setCurrentUser(null)}
           >
             <LogOut size={16} /> Déconnexion
           </button>
         ) : (
-          <button className="login-button" onClick={() => setLoginOpen(true)}>
+          <button 
+            className="login-button" 
+            onClick={() => setLoginOpen(true)}
+          >
             <UserRound size={17} /> Se connecter
           </button>
         )}
@@ -351,7 +351,6 @@ function App() {
       </div>
     </header>
   );
-
   const renderCart = () => (
     <>
       {cartOpen && (
