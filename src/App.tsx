@@ -29,7 +29,7 @@ import { DELIVERY_ZONES } from './data/delivery';
 import RestaurantDashboard from './RestaurantDashboard';
 import DeliveryDashboard from './DeliveryDashboard';
 import AdminDashboard from './AdminDashboard';
-
+import { useAuth } from './context/AuthContext';
 type Category = 'Tout' | 'Burgers' | 'Sushi' | 'Tacos';
 
 type CartLine = MenuItem & { quantity: number; restaurantName: string; restaurantId: string };
@@ -48,6 +48,7 @@ const categories: { label: Category; icon: string }[] = [
 ];
 
 function App() {
+  const { user, profile, role, loading, signOut } = useAuth();
   const [activeCategory, setActiveCategory] = useState<Category>('Tout');
   const [search, setSearch] = useState('');
   const [cart, setCart] = useState<CartLine[]>([]);
@@ -286,38 +287,77 @@ function App() {
         />
         <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--ink)' }}>faylasouf</span>
       </a>
-      <button className="location-picker"><MapPin size={17} strokeWidth={2.4} /><span>Rabat, Maroc</span><ChevronDown size={15} /></button>
-      <nav className="topnav">
-        <a href="#restaurants" onClick={(e) => { e.preventDefault(); goHome(); setTimeout(scrollToRestaurants, 100); }}>Restaurants</a>
-        <a href="#how-it-works" onClick={(e) => { e.preventDefault(); goHome(); setTimeout(scrollToHowItWorks, 100); }}>Comment ça marche</a>
-      </nav>
-      <div className="top-actions">
-        <button 
-          className="login-button" 
-          style={{ background: '#fff', border: '1px solid #e2e8f0', color: '#1e293b', fontWeight: 600 }}
-          onClick={() => setView('restaurant-dashboard')}
-        >
-          <Store size={16} /> Espace Restaurant
-        </button>
-        <button className="login-button" onClick={() => setView('delivery-dashboard')}>
-  Espace Livreur
-</button>
-<button className="login-button" onClick={() => setView('admin-dashboard')}>
-  Admin
-</button> 
 
-        {currentUser ? (
-          <button className="login-button" style={{ backgroundColor: '#fee2e2', color: '#dc2626', border: 'none' }} onClick={handleSignOut}>
-            <LogOut size={16} /> Déconnexion
-          </button>
+      <button className="location-picker">
+        <MapPin size={17} strokeWidth={2.4} />
+        <span>Rabat, Maroc</span>
+        <ChevronDown size={15} />
+      </button>
+
+      <nav className="topnav">
+        <a href="#restaurants" onClick={(e) => { e.preventDefault(); goHome(); setTimeout(scrollToRestaurants, 100); }}>
+          Restaurants
+        </a>
+        <a href="#how-it-works" onClick={(e) => { e.preventDefault(); goHome(); setTimeout(scrollToHowItWorks, 100); }}>
+          Comment ça marche
+        </a>
+      </nav>
+
+      <div className="top-actions">
+        {user ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* Bouton Admin */}
+            {role === 'admin' && (
+              <button
+                className="login-button"
+                onClick={() => setView('admin-dashboard')}
+                style={{ background: '#7c3aed', color: '#fff', border: 'none', fontWeight: 600 }}
+              >
+                👑 Admin
+              </button>
+            )}
+
+            {/* Bouton Restaurant */}
+            {(role === 'restaurant' || role === 'admin') && (
+              <button 
+                className="login-button" 
+                style={{ background: '#fff', border: '1px solid #e2e8f0', color: '#1e293b', fontWeight: 600 }}
+                onClick={() => setView('restaurant-dashboard')}
+              >
+                <Store size={16} /> Espace Restaurant
+              </button>
+            )}
+
+            {/* Bouton Livreur */}
+            {(role === 'courier' || role === 'admin') && (
+              <button
+                className="login-button"
+                onClick={() => setView('delivery-dashboard')}
+                style={{ background: '#d97706', color: '#fff', border: 'none', fontWeight: 600 }}
+              >
+                🛵 Livreur
+              </button>
+            )}
+
+            {/* Bouton Déconnexion */}
+            <button 
+              className="login-button" 
+              onClick={signOut}
+              style={{ cursor: 'pointer', background: '#f8fafc', border: '1px solid #e2e8f0' }}
+            >
+              <LogOut size={16} /> Déconnexion
+            </button>
+          </div>
         ) : (
-          <button className="login-button" onClick={() => { setIsSignUp(false); setLoginOpen(true); }}>
+          <button className="login-button" onClick={() => setLoginOpen(true)}>
             <UserRound size={17} /> Se connecter
           </button>
         )}
 
         <button className="cart-button" onClick={() => setCartOpen(true)}>
-          <ShoppingBag size={18} /><span>Panier</span>{cartCount > 0 && <b>{cartCount}</b>}
+          <ShoppingBag size={18} />
+          <span>Panier</span>
+          {cartCount > 0 && <b>{cartCount}</b>}
         </button>
       </div>
     </header>
@@ -523,14 +563,35 @@ function App() {
   );
 
   if (view === 'restaurant-dashboard') {
-    return <RestaurantDashboard onBack={goHome} />;
+    if (role === 'restaurant' || role === 'admin') {
+      return <RestaurantDashboard onBack={goHome} />;
+    }
+    return (
+      <div className="p-8 text-center text-red-600 font-bold">
+        Accès refusé : espace réservé aux restaurateurs.
+      </div>
+    );
   }
 if (view === 'delivery-dashboard') {
-  return <DeliveryDashboard onBack={goHome} />;
-}
+    if (role === 'courier' || role === 'admin') {
+      return <DeliveryDashboard onBack={goHome} />;
+    }
+    return (
+      <div className="p-8 text-center text-red-600 font-bold">
+        Accès refusé : espace réservé aux livreurs.
+      </div>
+    );
+  }
 if (view === 'admin-dashboard') {
-  return <AdminDashboard onBack={goHome} />;
-}
+    if (role === 'admin') {
+      return <AdminDashboard onBack={goHome} />;
+    }
+    return (
+      <div className="p-8 text-center text-red-600 font-bold">
+        Accès refusé : espace réservé aux administrateurs.
+      </div>
+    );
+  }
   if (view === 'restaurant' && selectedRestaurant) {
     return (
       <div className="app-shell">
